@@ -1,4 +1,4 @@
-list(iris = list(ecdf = structure(list(Sepal.Length = c(4.9, 
+lab_05_structures = list(iris = list(ecdf = structure(list(Sepal.Length = c(4.9, 
                                                         4.6, 4.4, 4.9, 4.8, 4.3, 5, 4.8, 4.9, 4.4, 4.5, 4.8, 5.5, 4.9, 
                                                         5, 6, 6.2, 5.5, 5.5, 6.3, 5, 5.8, 4.9, 6.7, 6.4, 5.7, 7.7, 6, 
                                                         6.3, 6.1, 5.8, 6.3), Sepal.Width = c(3, 3.1, 2.9, 3.1, 3, 3, 

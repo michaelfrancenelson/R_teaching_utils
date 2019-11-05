@@ -21,7 +21,7 @@ fun_exists = function(fn_name, ret_boolean = FALSE)
     if(ret_boolean) return (TRUE)
   } else
   {
-    cat("\nThe function ", fn_name, " was not found in memory not found.\n", sep = "")
+    cat("\nThe function ", fn_name, " was not found in memory.\n", sep = "")
     if(ret_boolean) return(FALSE)
   }
 }
