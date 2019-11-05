@@ -74,4 +74,4 @@ vec_equals = function(
   }
   if (!silent) cat(pass_1)
   return (TRUE)
-}f
+}
