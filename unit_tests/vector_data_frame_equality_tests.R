@@ -250,14 +250,8 @@ test_equivalent_data_frames = function()
   ))
   
   if (n_fails > 0 ) cat("One or more of the data frame equivalence unit tests failed.") else
-    cat("All data frame equivalence unit tests passed")
-    
+    cat("\n\nAll data frame equivalence unit tests passed")
 }
-
-
-
-
-
 
 # Perform tests ----
 {

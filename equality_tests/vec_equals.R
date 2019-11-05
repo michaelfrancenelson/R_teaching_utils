@@ -74,16 +74,4 @@ vec_equals = function(
   }
   if (!silent) cat(pass_1)
   return (TRUE)
-}
-
-
-# vec_equals(9, letters[1:6])
-# vec_equals(letters[2:7], letters[1:6])
-# vec_equals(1:6 - 0.000001, 1:6 + 0.0000001)
-# vec_equals(1:6 - 0.000001, 1:6 + 0.001)
-# vec_equals(NA, NULL)
-# vec_equals(NA, NA)
-# vec_equals(9, 9.0)
-# vec_equals(9L, 9.0)
-
-
+}f

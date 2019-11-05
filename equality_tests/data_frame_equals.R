@@ -26,7 +26,7 @@ data_frame_equals = function(
   pass_1 = "\nData frames are identical.",
   pass_2 = "\nData frame entries are identical")
 {
-    source("https://raw.githubusercontent.com/michaelfrancenelson/R_teaching_utils/master/equality_tests/vec_equals.R")
+  source("https://raw.githubusercontent.com/michaelfrancenelson/R_teaching_utils/master/equality_tests/vec_equals.R")
   nl = "\n"
   nl = ""
   
@@ -63,7 +63,7 @@ data_frame_equals = function(
   cols_in_order = identical(names(d1), names(d2))
   
   if (enforce_col_order & (!cols_in_order))
-      # identical(names(d1), names(d2)))
+    # identical(names(d1), names(d2)))
   {
     if (!silent)
       cat(err_3c, nl)
