@@ -184,6 +184,10 @@ test_non_equivalent_vectors = function()
 test_equivalent_data_frames = function()
 {
   
+  source("http://raw.githubusercontent.com/michaelfrancenelson/R_teaching_utils/master/equality_tests/data_frame_equals.R")
+  # source("equality_tests/data_frame_equals.R")
+  
+  
   df_pass = function(passed, test_name)
   {
     val_print = "passed"
