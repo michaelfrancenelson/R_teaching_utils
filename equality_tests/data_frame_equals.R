@@ -14,13 +14,14 @@ data_frame_equals = function(
   err_2b = paste0("\nColumn counts: ", ncol(d1), ", ", ncol(d2)),
   
   err_3  = paste0("\nData frame column names do not match."),
-  err_3a = paste0("\n First data frame has names: \"", paste0(names(d1), collapse = "\", \""), "\""),
+  err_3a = paste0("\nFirst data frame has names: \"", paste0(names(d1), collapse = "\", \""), "\""),
   err_3b = paste0("\nSecond data frame has names: \"", paste0(names(d2), collapse = "\", \""), "\""),
   err_3c = paste0("\nData frame columns not in the same order."),
   
   err_4  = "\nData frames are not identical",
   
-  warn_3 = paste0("\nWarning: data frame columns not in the same order."),
+  warn_3a = paste0("\nWarning: data frame columns not in the same order."),
+  warn_3b = paste0("\nWarning: data frame rows not in the same order."),
   
   pass_1 = "\nData frames are identical.",
   pass_2 = "\nData frame entries are identical")
@@ -28,6 +29,7 @@ data_frame_equals = function(
   
   source("https://raw.githubusercontent.com/michaelfrancenelson/R_teaching_utils/master/equality_tests/vec_equals.R")
   nl = "\n"
+  nl = ""
   
   # identical ----
   if (identical(d1, d2))
@@ -50,43 +52,45 @@ data_frame_equals = function(
     return (FALSE)
   }
   
-  # Same column names ----
+  # Columns ----
   if (!identical(sort(names(d1)), sort(names(d2))))
   {
     if (!silent) cat(err_3, err_3a, err_3b, nl)
     return (FALSE)
   }
   
+  
   # If enforcing column order:
-  if (enforce_col_order & !identical(names(d1), names(d2)))
+  cols_in_order = identical(names(d1), names(d2))
+  
+  if (enforce_col_order & (!cols_in_order))
+      # identical(names(d1), names(d2)))
   {
-    if (!silent) cat(err_3c, nl)
+    if (!silent)
+      cat(err_3c, nl)
     return (FALSE)
+  } 
+  
+  if(!cols_in_order)
+  {
+    if (!silent)
+      cat(warn_3a)
   }
+  
   
   # Otherwise dataframes have the same column names,
   # not necessarily in the same order.
   names_order = match(names(d1), names(d2))
   
-  if (!identical(names(d1), names(d2)))
-    if (!silent) cat(warn_3, nl)
-  
   # Row order ---- 
   order_1 = do.call(order, lapply(d1, c))
   order_2 = do.call(order, lapply(d2[, names_order], c))
-
+  
   if (enforce_row_order & !identical(order_1, order_2))
   {
     if (!silent) cat(err_4, nl)
     return (FALSE)
   }
-    
-  # if (enforce_row_order) 
-  # {
-  #   order_1 = 1:nrow(d1)
-  #   order_2 = order_1
-  # } else 
-  #     order_2 = do.call(order, lapply(d2[, names_order], c))
   
   d1 = d1[order_1, ]
   d2 = d2[order_2, names_order]
@@ -104,54 +108,7 @@ data_frame_equals = function(
     return (FALSE)
   }
   
+  if (!enforce_row_order & !silent) cat(warn_3b)
   if (!silent) cat(pass_2, nl)
   return (TRUE)  
 }
-
-data_frame_equals(iris, iris)
-data_frame_equals(iris, iris[, sample(ncol(iris))])
-data_frame_equals(iris[1:4, ], iris)
-
-iris2 = iris[sample(nrow(iris)), sample(ncol(iris))]
-data_frame_equals(iris, iris2, enforce_row_order = TRUE)
-data_frame_equals(iris, iris2, enforce_row_order = FALSE)
-
-
-# source("data_frame_equals.R")
-# source("https://github.com/michaelfrancenelson/R_teaching_utils/blob/master/data_frame_equals.R")
-# data(iris)
-# d1 = iris
-# set.seed(12345)
-# d2 = d1[sample(nrow(d1)), sample(ncol(d1))]
-# d1_names_order = match(names(d1), names(d2))
-# names(d2)[d1_names_order] == names(d1)
-# 
-# 
-# identical(d1, d2)
-# 
-# 
-# str(lapply(d1, c))
-# order(lapply(d1, c))
-# 
-# 
-# order_1 = do.call(order, lapply(d1, c))
-# order_2 = do.call(order, lapply(d2[, d1_names_order], c))
-# identical(d1[order_1, ], d2[order_2, d1_names_order])
-# 
-# d1a = d1[order_1, ]
-# d2a = d2[order_2, d1_names_order]
-# 
-# tail(d1a)
-# tail(d2a)
-# 
-# # element-wise check
-# sum(d1a != d2a)
-
-readLines("https://github.com/michaelfrancenelson/R_teaching_utils/blob/master/data_frame_equals.R")
-readLines("http://github.com/michaelfrancenelson/R_teaching_utils/blob/master/data_frame_equals.R")
-source.url("https://github.com/michaelfrancenelson/R_teaching_utils/blob/master/data_frame_equals.R")
-
-
-readLines(url("https://github.com/michaelfrancenelson/R_teaching_utils/blob/master/data_frame_equals.R"))
-
-read.table("http://lib.stat.cmu.edu/jcgs/tu",skip=4,header=T)

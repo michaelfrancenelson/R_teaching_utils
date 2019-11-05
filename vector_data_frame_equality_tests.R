@@ -40,9 +40,6 @@ test_equivalent_vectors = function()
   cat("\n")
 }
 
-
-
-
 # Vector inequality ----
 #
 # Need to test unequal
@@ -61,7 +58,7 @@ test_non_equivalent_vectors = function()
   max_string_l = 150
   
   vecs_1 = all_type_vecs(n = n1,lambda = lambda, max_word_size = max_string_l)
-  vecs_2 = all_type_vecs(n = n2,lambda = lambda, max_word_size = max_string_l, seed = 9876543)
+  vecs_2 = all_type_vecs(n = n1,lambda = lambda, max_word_size = max_string_l, seed = 9876543)
   vecs_3 = all_type_vecs(n = n3,lambda = lambda, max_word_size = max_string_l, seed = 340598)
   
   # non-vectors
@@ -85,10 +82,10 @@ test_non_equivalent_vectors = function()
   test_vector_lists(list(vecs_1$num_1), list(vecs_2$num_1 + 0.001), "numeric differences within tolerance", record_passes = FALSE)
   
   # vectors hold different values of identical vectors  
-  test_vector_lists(vecs_1, vecs_2, "non-identical values vectors", record_passes = FALSE, exclude_NaN = TRUE)
+  test_vector_lists(vecs_1, vecs_2, "non-identical values vectors", record_passes = FALSE, exclude_NA = TRUE, exclude_NaN = TRUE)
   
   # vectors are different sizes
-  test_vector_lists(vecs_1, vecs_3, "different vector length", record_passes = FALSE, exclude_NaN = TRUE)
+  test_vector_lists(vecs_1, vecs_3, "different vector length", record_passes = FALSE, exclude_NA = TRUE, exclude_NaN = TRUE)
   
   # test_vector_lists(vecs_1, vecs_2, "identical vectors")
   
@@ -147,28 +144,22 @@ test_non_equivalent_vectors = function()
       
       if(class(vecs_1) != class(vecs_2)) test_2 = vecs_2 else test_2 = vecs_2[[i]]
       
-      # cat("\n sums of NA, Null, and NaN:",
-      #     sum(is.na(test_1)) == length(test_1) && exclude_NA,
-      #     sum(is.null(test_1)) == length(test_1) && exclude_NULL,
-      #     sum(is.nan(test_1)) == length(test_1) && exclude_NaN)
-      
-
-if (sum(
-  (sum(is.na(test_1)) == length(test_1) && exclude_NA),
-  (sum(is.null(test_1)) == length(test_1) && exclude_NULL),
-  (sum(is.nan(test_1)) == length(test_1) && exclude_NaN)) == 0)
-{
-  n_tests = n_tests + 1
-  if(vec_equals(test_1, test_2, silent = TRUE))
-  {
-    passed_sum = passed_sum + 1
-    if (!record_passes) 
-      cat("\nWarning: test vector", i, names(vecs_1)[i], "passed test when it should have failed")
-  } else {
-    failed_sum = failed_sum + 1
-    if (record_passes) cat("\nWarning: test vector", i, names(test_1), "failed test when it should have passed")
-  }
-} else cat("\nSkipping test", i)
+      if (sum(
+        (sum(is.na(test_1)) == length(test_1) && exclude_NA),
+        (sum(is.null(test_1)) == length(test_1) && exclude_NULL),
+        (sum(is.nan(test_1)) == length(test_1) && exclude_NaN)) == 0)
+      {
+        n_tests = n_tests + 1
+        if(vec_equals(test_1, test_2, silent = TRUE))
+        {
+          passed_sum = passed_sum + 1
+          if (!record_passes) 
+            cat("\nWarning: test vector", i, names(vecs_1)[i], "passed test when it should have failed")
+        } else {
+          failed_sum = failed_sum + 1
+          if (record_passes) cat("\nWarning: test vector", i, names(test_1), "failed test when it should have passed")
+        }
+      } # else cat("\nSkipping test", i, names(vecs_1)[i])
     }
     
     if (record_passes) test_sum = passed_sum else test_sum = failed_sum
@@ -184,20 +175,90 @@ if (sum(
         FALSE
       }
     ))
-    
-    # test_vector_lists(list(vecs_1$num_1), list(vecs_2$num_1 + 0.00001), "numeric differences outside tolerance")
-    # l1 = list(vecs_1$num_1)
-    # l2 = list(vecs_2$num_1 + 0.00001)
-    
-    # testvec  
-    
   }
 }
+
+
+
+# Data frame equality tests ----
+test_equivalent_data_frames = function()
+{
+  
+  df_pass = function(passed, test_name)
+  {
+    val_print = "passed"
+    if (!passed) val_print = "failed"
+    
+    cat("\nTests for", test_name, val_print, sep = " ")
+    return(passed)
+  }
+  
+  silent_i = FALSE
+  silent_i = TRUE
+
+  iris2 = iris[, sample(ncol(iris))]
+  iris3 = iris[sample(nrow(iris)), ]
+  iris4 = iris[sample(nrow(iris)), sample(ncol(iris))]
+  
+  n_fails = sum(!c(
+    
+    # identical data frames test
+    df_pass(data_frame_equals(iris, iris, silent = silent_i), "self-equivalence"),
+    
+    # identical entries, rows shuffled
+    df_pass(
+      data_frame_equals(iris, iris[, sample(ncol(iris))], silent = silent_i),
+      "shuffled rows (row order not enforced)"),
+    
+    # non-matching shapes
+    df_pass(!data_frame_equals(iris[1:4, ], iris, silent = silent_i), "mismatched size 1"),
+    df_pass(!data_frame_equals(iris[, 1:3], iris, silent = silent_i), "mismatched size 2"),
+    
+    # shuffled column order, 
+    df_pass(
+      data_frame_equals(iris, iris2, enforce_col_order = FALSE, silent = silent_i), 
+      "shuffled columns (order not enforced) 1"),
+    
+    # column order enforced
+    df_pass(
+      !data_frame_equals(iris, iris2, enforce_col_order = TRUE, silent = silent_i), 
+      "shuffled columns (order enforced) 1"),
+      
+      # shuffled row order
+      df_pass(
+        data_frame_equals(iris, iris3, enforce_row_order = FALSE, silent = silent_i), 
+        "shuffled rows (order not enforced) 1"),
+    
+    # row order enforced
+    df_pass(
+      !data_frame_equals(iris, iris3, enforce_row_order = TRUE, silent = silent_i), 
+      "shuffled rows (order enforced) 1"),
+    
+    df_pass(
+      data_frame_equals(iris, iris2, enforce_col_order = FALSE, enforce_row_order = FALSE, silent = silent_i), 
+      "shuffled rows and columns (order not enforced) 1"),
+    df_pass(
+      data_frame_equals(iris, iris3, enforce_col_order = FALSE, enforce_row_order = FALSE, silent = silent_i), 
+      "shuffled rows and columns (order not enforced) 2"),
+    df_pass(
+      data_frame_equals(iris, iris4, enforce_col_order = FALSE, enforce_row_order = FALSE, silent = silent_i), 
+      "shuffled rows and columns (order not enforced)")
+  ))
+  
+  if (n_fails > 0 ) cat("One or more of the data frame equivalence unit tests failed.") else
+    cat("All data frame equivalence unit tests passed")
+    
+}
+
+
+
+
 
 
 # Perform tests ----
 {
   test_equivalent_vectors()
   test_non_equivalent_vectors()  
+  test_equivalent_data_frames()
 }
 

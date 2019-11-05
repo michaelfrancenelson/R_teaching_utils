@@ -2,24 +2,16 @@
 # Print helpful messages.
 # This will probably be slow for very long vectors.
 vec_equals = function(
-  
   v1, v2, 
-  
   silent = FALSE,
-  
   err_1  = "\nAt least one object is not a vector.",
-  
   err_2  = "\nVectors do not have the same length: ",
-  
   err_3  = "\nVectors are not of the same class.",
   err_3a = paste0("\nVector 1 is of class ", class(v1)),
   err_3b = paste0("\nVector 2 is of class ", class(v2)),
-  
   err_4a  = "\nElements at indices (",
   err_4b  = ") do not match.",
-  
   pass_1 = "\nVectors are identical",
-  
   tol_digits = 4)
 {
  
