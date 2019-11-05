@@ -8,8 +8,8 @@
 #    4: numeric vectors, differences below tolerance
 test_equivalent_vectors = function()
 {
-  # source("https://raw.githubusercontent.com/michaelfrancenelson/R_teaching_utils/master/equality_tests/vec_equals.R")
-  source("equality_tests/vec_equals.R")
+  source("https://raw.githubusercontent.com/michaelfrancenelson/R_teaching_utils/master/equality_tests/vec_equals.R")
+  # source("equality_tests/vec_equals.R")
   
   set.seed(12345)
   n = 100
@@ -34,7 +34,7 @@ test_equivalent_vectors = function()
   # sapply(vecs_1, FUN = function(x) vec_equals(x, x, silent = FALSE))
   
   # numeric vectors match within tolerance
-  test_vector_lists(list(vecs_1$num_1), list(vecs_2$num_1 + 0.00001), "numeric differences outside tolerance")
+  test_vector_lists(list(vecs_1$num_1), list(vecs_2$num_1 + 0.00000001), "numeric differences outside tolerance")
 }
 
 
@@ -48,6 +48,7 @@ test_equivalent_vectors = function()
 #   values
 test_non_equivalent_vectors = function()
 {
+  source("https://raw.githubusercontent.com/michaelfrancenelson/R_teaching_utils/master/equality_tests/vec_equals.R")
   set.seed(12345)
   n1 = 100
   n2 = 103
@@ -57,34 +58,21 @@ test_non_equivalent_vectors = function()
   vecs_1 = all_type_vecs(n = n1,lambda = lambda, max_word_size = max_string_l)
   vecs_2 = all_type_vecs(n = n2,lambda = lambda, max_word_size = max_string_l, seed = 9876543)
   
-  
-  source("https://raw.githubusercontent.com/michaelfrancenelson/R_teaching_utils/master/equality_tests/vec_equals.R")
-  
-  set.seed(12345)
-  n = 100
-  lambda = 50
-  max_string_l = 120
-  max_name_l = 33
-  
-  vecs_1 = vecs_2 = all_type_vecs(n = n,lambda = lambda, max_word_size = max_string_l)
-  
-  # numeric vectors match within tolerance
-  test_vector_lists(list(vecs_1$num_1), list(vecs_2$num_1 + 0.001), "numeric differences within tolerance")
-  
-  vec_equals(vecs_1$num_1, vecs_2$num_1 + 0.001)
-  
   # non-vectors
   # vector and NA
-  sum(sapply(vecs_1, FUN = function(x) vec_equals(x, NA)))
+  test_vector_lists(vecs_1, NA, "vector and NA", record_passes = FALSE)
   
   # vector and NULL
-  sum(sapply(vecs_1[names(vecs_1) != "null_1"], FUN = function(x) vec_equals(x, NULL)))
+  test_vector_lists(vecs_1[names(vecs_1) != "null_1"], NULL, "vector and Null", record_passes = FALSE)
   
   
-  vecs_1[-"null_1"]
+  
+  sum(sapply(vecs_1[names(vecs_1) != "null_1"], FUN = function(x) vec_equals(x, NULL, silent = TRUE)))
   
   # vector and data.frame
   data("iris")
+  test_vector_lists(vecs_1, iris, "vector and data frame", record_passes = FALSE)
+  
   sum(sapply(vecs_1, FUN = function(x) vec_equals(x, iris)))
   
   # vector and function
@@ -134,7 +122,7 @@ test_non_equivalent_vectors = function()
     )
   }
   
-  test_vector_lists = function(vecs_1, vecs_2, test_name)
+  test_vector_lists = function(vecs_1, vecs_2, test_name, record_passes = TRUE)
   {
     # passed_sum = sum(sapply(1:length(vecs_1), FUN = function(x) vec_equals(vecs_1[[x]], vecs_2[[x]], silent = TRUE))) == 0
     
@@ -148,18 +136,33 @@ test_non_equivalent_vectors = function()
     # vec_equals(rep(NULL, 10), rep(NULL, 10))
     # vec_equals(rep(NA, 10), rep(NA, 10))
     
+    
+    test_1 = vecs_1$na_1
+    test_1
     passed_sum = 0
+    failed_sum = 0
     for(i in 1:length(vecs_1))
     {
+      test_1 = vecs_1[[i]]
+      if(!is.list(vecs_2)) test_2 = vecs_2 else test_2 = vecs_2[[i]]
+      
+      
       # print(names(vecs_1)[i])
       # if (!(is.null(vecs_1[[i]]) && is.null(vecs_2[[i]]))
-      if(!vec_equals(vecs_1[[i]], vecs_2[[i]], silent = TRUE))
+      if(!vec_equals(test_1, test_2, silent = TRUE))
+      {
         passed_sum = passed_sum + 1
-    
+      } else {
+        failed_sum = failed_sum + 1
+      }
+      
+      
     }
     
+    if (record_passes) test_sum = passed_sum else test_sum = failed_sum
+    
     return(ifelse(
-      passed_sum == 0,
+      test_sum == 0,
       {
         cat("\n", test_name, " test passed", sep = "")
         TRUE
