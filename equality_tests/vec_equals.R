@@ -61,6 +61,7 @@ vec_equals = function(
   {
     for (i in 1:length(v1))
     {
+      if (!(is.nan(v1[i]) & is.nan(v2[i])))
       if(signif(v1[i], tol_digits) != signif(v2[i], tol_digits))
       {
         err_indices = c(err_indices, i)
