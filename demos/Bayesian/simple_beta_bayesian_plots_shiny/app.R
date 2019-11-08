@@ -88,16 +88,16 @@ server <- function(input, output) {
   # 2. Its output type is a plot
   output$distPlot <- renderPlot({
     
-    x = c(0.001, 0.999)
+    x = seq(0.001, 0.999, length.out = 300)
     y_prior = dbeta(x, shape1 = input$prior1, shape2 = input$prior2)
     
     
     # hist(x)
     
-    # plot(x, y_prior, type = "l")
+    plot(x, y_prior, type = "l")
     
     
-    plot(x)
+    # plot(x)
     # x    <- faithful$waiting
     # bins <- seq(min(x), max(x), length.out = input$bins + 1)
     # bins2 <- seq(min(x), max(x), length.out = input$bins2)
