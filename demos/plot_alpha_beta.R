@@ -8,19 +8,19 @@ plot_alpha_beta = function(
   title = "", xlab = "", ylab = "Prob. Density") 
 { 
   # for testing 
-  { 
-    H0 = 1.95; H1 = 2.1
-    critical_diff = .2; alpha = 0.05
-    n = 1000
-    hypothesis = "upper"
-    alpha_col = 2
-    beta_col = 3
-    xmin = NA
-    xmax = NA
-    title = ""
-    xlab = ""
-    ylab = "Prob. Density"
-  } 
+  # { 
+  #   H0 = 1.95; H1 = 2.1
+  #   critical_diff = .2; alpha = 0.05
+  #   n = 1000
+  #   hypothesis = "upper"
+  #   alpha_col = 2
+  #   beta_col = 3
+  #   xmin = NA
+  #   xmax = NA
+  #   title = ""
+  #   xlab = ""
+  #   ylab = "Prob. Density"
+  # } 
   
   xlim_scale = 2.8 * critical_diff 
   
